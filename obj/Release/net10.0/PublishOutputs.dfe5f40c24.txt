@@ -1,0 +1,5 @@
+C:\Dual Stream App\bin\Release\net10.0\publish-check\DualStreamApp.exe
+C:\Dual Stream App\bin\Release\net10.0\publish-check\DualStreamApp.dll
+C:\Dual Stream App\bin\Release\net10.0\publish-check\DualStreamApp.deps.json
+C:\Dual Stream App\bin\Release\net10.0\publish-check\DualStreamApp.runtimeconfig.json
+C:\Dual Stream App\bin\Release\net10.0\publish-check\DualStreamApp.pdb
