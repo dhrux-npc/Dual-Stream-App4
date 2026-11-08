@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#080b12">
+    <title>Dual Stream - Screen and System Audio</title>
+    <link rel="stylesheet" href="site.css">
+</head>
+<body>
+    <div id="appOverlay" class="app-overlay" role="dialog" aria-modal="true" aria-labelledby="overlayTitle" aria-describedby="overlayMessage" aria-live="polite">
+        <section class="overlay-card">
+            <div id="overlaySpinner" class="loading-spinner" aria-hidden="true"></div>
+            <div id="overlayErrorIcon" class="overlay-error-icon hidden" aria-hidden="true">!</div>
+            <h1 id="overlayTitle">Preparing Dual Stream</h1>
+            <p id="overlayMessage">Getting your private screens ready…</p>
+            <section id="overlayTroubleshooting" class="overlay-troubleshooting hidden" aria-label="Troubleshooting">
+                <h2>What to check</h2>
+                <ul id="overlayTroubleshootingList"></ul>
+            </section>
+            <details id="overlayTechnical" class="overlay-technical hidden">
+                <summary>Technical details</summary>
+                <pre id="overlayTechnicalText"></pre>
+            </details>
+            <div id="overlayActions" class="overlay-actions hidden">
+                <button id="btnOverlayRetry" type="button" class="action-button">Try again</button>
+                <button id="btnOverlayBack" type="button" class="secondary-button">Back to setup</button>
+            </div>
+        </section>
+    </div>
+    <header class="app-header">
+        <div class="brand"><span aria-hidden="true">▣</span> DUAL STREAM</div>
+        <div class="header-actions">
+            <div id="peerStatus" class="peer-status hidden" aria-live="polite">
+                <span id="peerDot" class="peer-dot"></span>
+                <span id="roomCodeText">Session: Offline</span>
+                <button id="btnCopyCode" type="button" class="icon-button" title="Copy room ID" aria-label="Copy room ID">⧉</button>
+                <button id="btnCopyInvite" type="button" class="icon-button hidden" title="Copy secure guest invite" aria-label="Copy secure guest invite">↗</button>
+                <button id="btnEndSession" type="button" class="header-button session-end-button">End Session</button>
+            </div>
+            <button id="btnHostSession" type="button" class="header-button">Host / Join Session</button>
+            <button id="btnFullscreen" type="button" class="header-button" title="Full screen" aria-label="Full screen">⛶</button>
+        </div>
+    </header>
+
+    <main class="stream-grid">
+        <section id="leftContainer" class="stream-panel" aria-label="Your screen">
+            <video id="leftVideo" autoplay muted playsinline></video>
+            <div class="idle-screen-mark">
+                <span class="idle-screen-icon" aria-hidden="true">▣</span>
+                <span id="leftIdleLabel">YOUR SCREEN</span>
+                <span class="idle-help">Host or join a session above to get started</span>
+            </div>
+            <div id="leftPlaceholder" class="stream-placeholder hidden">
+                <button id="btnLeftStart" type="button" class="primary-button">▣ <span>Start sharing my screen</span></button>
+                <p>Choose a screen and enable system audio in the browser picker if you want to share device sound.</p>
+            </div>
+            <p id="leftCaptureMessage" class="capture-message hidden" role="status"></p>
+            <div class="stream-controls">
+                <span id="leftLabel">YOUR SCREEN</span>
+                <div>
+                    <button id="btnLeftMute" type="button" class="icon-button audio-control" disabled title="Mute my shared system audio" aria-label="Mute my audio" aria-pressed="false">Mute my audio</button>
+                    <button id="btnLeftStop" type="button" class="icon-button share-stop-button" disabled title="Stop sharing my screen" aria-label="Stop sharing my screen">Stop sharing</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="rightContainer" class="stream-panel" aria-label="Guest's screen">
+            <video id="rightVideo" autoplay muted playsinline></video>
+            <div class="idle-screen-mark" aria-hidden="true">
+                <span class="idle-screen-icon remote">▣</span>
+                <span id="rightIdleLabel">GUEST SCREEN</span>
+            </div>
+            <div id="rightPlaceholder" class="stream-placeholder hidden">
+                <p>Waiting for the other person to share their screen. Their audio is always under your control.</p>
+            </div>
+            <p id="rightCaptureMessage" class="capture-message hidden" role="status"></p>
+            <div class="stream-controls">
+                <span id="rightLabel">GUEST SCREEN</span>
+                <div>
+                    <button id="btnRightMute" type="button" class="icon-button audio-control" disabled title="Hear guest system audio" aria-label="Hear guest audio" aria-pressed="true">Hear guest audio</button>
+                    <button id="btnRightStop" type="button" class="icon-button" disabled title="Stop remote view" aria-label="Stop remote view">⏻</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="remoteModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <section class="session-card">
+            <div class="session-header">
+                <h1 id="modalTitle">Host or Join Session</h1>
+                <button id="btnCloseModal" type="button" class="icon-button" aria-label="Close session dialog">×</button>
+            </div>
+
+            <div class="session-tabs" role="tablist" aria-label="Session mode">
+                <button id="tabHost" type="button" role="tab" aria-controls="sectionHost" aria-selected="true">HOST SESSION</button>
+                <button id="tabJoin" type="button" role="tab" aria-controls="sectionJoin" aria-selected="false">JOIN SESSION</button>
+            </div>
+
+            <div id="sectionHost" class="session-form" role="tabpanel" aria-labelledby="tabHost">
+                <p>Create a private room and send its secure invite link to one trusted guest. Keep the link private.</p>
+                <label for="hostSessionId">Custom session ID</label>
+                <input id="hostSessionId" type="text" autocomplete="off" placeholder="e.g. my-room-101">
+                <span class="field-label">Secure session key</span>
+                <div class="password-row">
+                    <button id="btnCopyPassword" type="button" class="secondary-button" disabled>Copy secure key</button>
+                </div>
+                <p class="hint">After the room is created, keep this dialog open and copy the key to share it privately with your guest. You can also copy the secure invite link from the session bar.</p>
+                <button id="btnStartHost" type="button" class="action-button">Start Hosting Session</button>
+            </div>
+
+            <div id="sectionJoin" class="session-form hidden" role="tabpanel" aria-labelledby="tabJoin" hidden>
+                <p>Open the secure invite link from your host, or enter the room ID and invite key they shared with you.</p>
+                <label for="joinSessionId">Target session ID</label>
+                <input id="joinSessionId" type="text" autocomplete="off" placeholder="Enter room ID">
+                <label for="joinPassword">Secure invite key</label>
+                <input id="joinPassword" type="password" autocomplete="off" placeholder="Paste the key or open the invite link">
+                <button id="btnConnectJoin" type="button" class="action-button">Connect to Host</button>
+            </div>
+
+            <div id="sessionMessage" class="session-message hidden" role="status" aria-live="polite"></div>
+        </section>
+    </div>
+    <script src="app.js" defer></script>
+</body>
+</html>
